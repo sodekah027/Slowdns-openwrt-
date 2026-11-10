@@ -1,0 +1,10 @@
+{
+    "admin": {
+        "services": {
+            "slowdns": {
+                "title": "SlowDNS",
+                "order": 30
+            }
+        }
+    }
+}

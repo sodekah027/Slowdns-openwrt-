@@ -1,0 +1,8 @@
+<%#
+    Show latest log lines for SlowDNS
+%>
+<%+header%>
+<h2>SlowDNS Log (last 50 lines)</h2>
+<pre><%= luci.sys.exec("logread 2>/dev/null | grep -i slowdns | tail -50") %></pre>
+<p><a href="<%=luci.dispatcher.build_url('admin','services','slowdns')%>">Back to config</a></p>
+<%+footer%>

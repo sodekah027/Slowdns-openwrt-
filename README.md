@@ -10,6 +10,8 @@
 
 Script installer otomatis untuk menjalankan **SlowDNS** menggunakan `dnstt-client` di OpenWrt pada perangkat berbasis Amlogic HG680P. Tunnel DNS ini memungkinkan koneksi SSH melewati port DNS (UDP 53) untuk menembus firewall/blokir ISP.
 
+Tersedia **LuCI GUI** — dapat dikontrol langsung dari panel web OpenWrt di browser (`192.168.1.1`).
+
 ---
 
 ## Parameter yang Digunakan
@@ -21,6 +23,7 @@ Script installer otomatis untuk menjalankan **SlowDNS** menggunakan `dnstt-clien
 | Public Key | b8fdc42e44c7ab1ebe2258e94cf6 |
 | DNS Resolver | 103.253.244.163 |
 | SSH Host:Port | bosku.agenvpn.web.id:443 |
+| Local Port | 2222 |
 
 ---
 
@@ -29,15 +32,28 @@ Script installer otomatis untuk menjalankan **SlowDNS** menggunakan `dnstt-clien
 ```
 openwrt-slowdns/
 ├── README.md
+├── LICENSE
 ├── install.sh
 └── files/
     └── etc/
-        ├── init.d/
-        │   └── slowdns          # procd service script
-        ├── config/
-        │   └── slowdns          # UCI konfigurasi
-        └── slowdns/
-            └── pubkey.pub       # Public key server
+    │   ├── init.d/
+    │   │   └── slowdns                    # procd service script
+    │   ├── config/
+    │   │   └── slowdns                    # UCI konfigurasi
+    │   └── slowdns/
+    │       └── pubkey.pub                 # Public key server
+    └── usr/
+        ├── lib/lua/luci/
+        │   ├── controller/
+        │   │   └── slowdns.lua            # LuCI controller
+        │   ├── model/cbi/
+        │   │   └── slowdns.lua            # LuCI config form
+        │   └── view/slowdns/
+        │       └── log.htm                # LuCI log viewer
+        ├── share/luci/menu.d/
+        │   └── 10_slowdns.json            # Menu entry
+        └── share/rpcd/acl.d/
+            └── luci-app-slowdns.json      # ACL permission
 ```
 
 ---
@@ -66,7 +82,7 @@ ssh root@192.168.1.1
 
 ```bash
 opkg update
-opkg install curl
+opkg install curl luci-base
 ```
 
 ---
@@ -80,15 +96,11 @@ git clone https://github.com/sodekah027/Slowdns-openwrt-.git /tmp/slowdns-instal
 cd /tmp/slowdns-install
 ```
 
-Metode B — download manual satu per satu (jika git tidak tersedia):
+Metode B — download manual (jika git tidak tersedia):
 ```bash
 mkdir -p /tmp/slowdns-install
 cd /tmp/slowdns-install
-
-# Download install.sh
 curl -L -o install.sh https://raw.githubusercontent.com/sodekah027/Slowdns-openwrt-/main/install.sh
-
-# Download init service
 mkdir -p files/etc/init.d files/etc/config files/etc/slowdns
 curl -L -o files/etc/init.d/slowdns https://raw.githubusercontent.com/sodekah027/Slowdns-openwrt-/main/files/etc/init.d/slowdns
 curl -L -o files/etc/config/slowdns https://raw.githubusercontent.com/sodekah027/Slowdns-openwrt-/main/files/etc/config/slowdns
@@ -106,42 +118,49 @@ sh install.sh
 
 Installer akan otomatis:
 1. Download binary `dnstt-client` untuk AArch64
-2. Menyalin file konfigurasi dan service ke lokasi yang benar
+2. Menyalin file konfigurasi, service, dan LuCI plugin ke lokasi yang benar
 3. Mengaktifkan dan menjalankan service SlowDNS
 
 ---
 
-### Langkah 5 — Cek Status Service
+### Langkah 5 — Akses LuCI GUI
+
+1. Buka browser, akses `http://192.168.1.1`
+2. Login ke OpenWrt
+3. Masuk ke menu **Services → SlowDNS**
+4. Atur parameter sesuai kebutuhan
+5. Klik **Save & Apply**
+
+Tombol kontrol yang tersedia:
+- **Enable/Disable** — aktifkan atau matikan service
+- **Start / Stop / Restart** — kontrol service langsung
+- **View Log** — lihat log real-time
+
+---
+
+### Langkah 6 — Cek Status Service (CLI)
 
 ```bash
 /etc/init.d/slowdns status
-```
-
-Atau cek proses berjalan:
-```bash
 ps | grep dnstt
 ```
 
 ---
 
-### Langkah 6 — Koneksi SSH Melalui Tunnel
-
-Setelah `dnstt-client` berjalan di port lokal `2222`, hubungkan SSH melalui tunnel:
+### Langkah 7 — Koneksi SSH Melalui Tunnel
 
 ```bash
 ssh -p 2222 root@127.0.0.1
 ```
 
-Untuk SOCKS5 proxy (browsing lewat tunnel):
+Untuk SOCKS5 proxy:
 ```bash
 ssh -p 2222 root@127.0.0.1 -N -D 1080
 ```
 
 ---
 
-### Langkah 7 — Konfigurasi Manual (Opsional)
-
-Edit konfigurasi UCI jika diperlukan:
+### Langkah 8 — Konfigurasi Manual via UCI (Opsional)
 
 ```bash
 uci set slowdns.settings.enabled=1
@@ -181,6 +200,11 @@ rm -f /usr/bin/dnstt-client
 rm -f /etc/init.d/slowdns
 rm -f /etc/config/slowdns
 rm -rf /etc/slowdns
+rm -f /usr/lib/lua/luci/controller/slowdns.lua
+rm -f /usr/lib/lua/luci/model/cbi/slowdns.lua
+rm -rf /usr/lib/lua/luci/view/slowdns
+rm -f /usr/share/luci/menu.d/10_slowdns.json
+rm -f /usr/share/rpcd/acl.d/luci-app-slowdns.json
 ```
 
 ---

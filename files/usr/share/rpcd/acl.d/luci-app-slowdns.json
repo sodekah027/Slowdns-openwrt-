@@ -1,0 +1,12 @@
+{
+    "luci-app-slowdns": {
+        "description": "Grant access to SlowDNS LuCI interface",
+        "read": {
+            "uci": ["slowdns"],
+            "ubus": ["luci.slowdns"]
+        },
+        "write": {
+            "uci": ["slowdns"]
+        }
+    }
+}
