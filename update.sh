@@ -28,6 +28,7 @@ curl -s -o "$TMP/files/etc/slowdns/pubkey.pub"                       "$REPO/file
 curl -s -o "$TMP/files/usr/lib/lua/luci/controller/slowdns.lua"      "$REPO/files/usr/lib/lua/luci/controller/slowdns.lua"
 curl -s -o "$TMP/files/usr/lib/lua/luci/model/cbi/slowdns.lua"       "$REPO/files/usr/lib/lua/luci/model/cbi/slowdns.lua"
 curl -s -o "$TMP/files/usr/lib/lua/luci/view/slowdns/log.htm"        "$REPO/files/usr/lib/lua/luci/view/slowdns/log.htm"
+curl -s -o "$TMP/files/usr/lib/lua/luci/view/slowdns/dashboard.htm"  "$REPO/files/usr/lib/lua/luci/view/slowdns/dashboard.htm"
 curl -s -o "$TMP/files/usr/share/luci/menu.d/10_slowdns.json"        "$REPO/files/usr/share/luci/menu.d/10_slowdns.json"
 curl -s -o "$TMP/files/usr/share/rpcd/acl.d/luci-app-slowdns.json"   "$REPO/files/usr/share/rpcd/acl.d/luci-app-slowdns.json"
 

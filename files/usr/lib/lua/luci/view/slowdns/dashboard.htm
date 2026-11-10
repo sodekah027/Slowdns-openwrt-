@@ -1,0 +1,185 @@
+<%+header%>
+
+<style>
+.sd-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+.sd-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: #333;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 6px;
+}
+.sd-status-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+.sd-label { width: 160px; color: #555; }
+.sd-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+    display: inline-block;
+}
+.dot-green  { background: #4caf50; box-shadow: 0 0 6px #4caf50; }
+.dot-red    { background: #f44336; box-shadow: 0 0 6px #f44336; }
+.dot-yellow { background: #ff9800; }
+.sd-badge {
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #fff;
+}
+.badge-green  { background: #4caf50; }
+.badge-red    { background: #f44336; }
+.sd-btn {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: none;
+    margin-right: 6px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    border: none;
+}
+.btn-green  { background: #4caf50; }
+.btn-red    { background: #f44336; }
+.btn-orange { background: #ff9800; }
+.btn-blue   { background: #2196f3; }
+.btn-gray   { background: #607d8b; }
+#sd-log {
+    background: #1a1a1a;
+    color: #00ff99;
+    font-family: monospace;
+    font-size: 12px;
+    padding: 12px;
+    border-radius: 6px;
+    height: 260px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+.yacd-frame {
+    width: 100%;
+    height: 520px;
+    border: none;
+    border-radius: 8px;
+    background: #fff;
+}
+</style>
+
+<h2>SlowDNS — Dashboard</h2>
+
+<!-- STATUS CARD -->
+<div class="sd-card">
+    <div class="sd-title">Status Koneksi</div>
+    <div class="sd-status-row">
+        <span class="sd-label">dnstt-client</span>
+        <span class="sd-dot dot-yellow" id="dot-dnstt"></span>
+        <span class="sd-badge badge-red" id="badge-dnstt">Checking...</span>
+    </div>
+    <div class="sd-status-row">
+        <span class="sd-label">SSH Tunnel</span>
+        <span class="sd-dot dot-yellow" id="dot-ssh"></span>
+        <span class="sd-badge badge-red" id="badge-ssh">Checking...</span>
+    </div>
+    <div class="sd-status-row">
+        <span class="sd-label">Port Lokal</span>
+        <span class="sd-dot dot-yellow" id="dot-port"></span>
+        <span class="sd-badge badge-red" id="badge-port">Checking...</span>
+    </div>
+</div>
+
+<!-- CONTROL CARD -->
+<div class="sd-card">
+    <div class="sd-title">Kontrol Service</div>
+    <a class="sd-btn btn-green"  href="<%=luci.dispatcher.build_url('admin','services','slowdns','start')%>">▶ Start</a>
+    <a class="sd-btn btn-red"    href="<%=luci.dispatcher.build_url('admin','services','slowdns','stop')%>">■ Stop</a>
+    <a class="sd-btn btn-orange" href="<%=luci.dispatcher.build_url('admin','services','slowdns','restart')%>">↺ Restart</a>
+    <a class="sd-btn btn-blue"   href="<%=luci.dispatcher.build_url('admin','services','slowdns','config')%>">⚙ Konfigurasi</a>
+    <a class="sd-btn btn-gray"   href="#" onclick="fetchLog()">↻ Refresh Log</a>
+</div>
+
+<!-- YACD CARD -->
+<div class="sd-card">
+    <div class="sd-title">YACD — Clash Dashboard</div>
+    <p style="font-size:12px;color:#888;">Pastikan Clash/Mihomo sudah berjalan dengan external-controller aktif di port <b>9090</b>.</p>
+    <iframe class="yacd-frame"
+        src="http://yacd.haishan.me/?hostname=127.0.0.1&port=9090&secret="
+        sandbox="allow-scripts allow-same-origin allow-forms">
+    </iframe>
+</div>
+
+<!-- LOG CARD -->
+<div class="sd-card">
+    <div class="sd-title">Log SlowDNS (Real-time)</div>
+    <div id="sd-log">Memuat log...</div>
+</div>
+
+<script>
+function setStatus(id, ok) {
+    var dot   = document.getElementById('dot-' + id);
+    var badge = document.getElementById('badge-' + id);
+    if (ok) {
+        dot.className   = 'sd-dot dot-green';
+        badge.className = 'sd-badge badge-green';
+        badge.innerText = 'Connected';
+    } else {
+        dot.className   = 'sd-dot dot-red';
+        badge.className = 'sd-badge badge-red';
+        badge.innerText = 'Disconnected';
+    }
+}
+
+function fetchStatus() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '<%=luci.dispatcher.build_url("admin","services","slowdns","status")%>', true);
+    xhr.onload = function() {
+        try {
+            var d = JSON.parse(xhr.responseText);
+            setStatus('dnstt', d.dnstt);
+            setStatus('ssh',   d.ssh);
+            setStatus('port',  d.port);
+        } catch(e) {}
+    };
+    xhr.send();
+}
+
+function fetchLog() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/cgi-bin/luci/;stok=/rpc?method=exec', true);
+    var el = document.getElementById('sd-log');
+    el.innerText = 'Memuat log...';
+    var x = new XMLHttpRequest();
+    x.open('POST', '/cgi-bin/luci', true);
+    x.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    x.onload = function() { el.innerText = x.responseText || '(log kosong)'; el.scrollTop = el.scrollHeight; };
+    x.onerror = function() {
+        el.innerText = '(Gagal memuat log via API, cek logread manual)';
+    };
+
+    var x2 = new XMLHttpRequest();
+    x2.open('GET', '<%=luci.dispatcher.build_url("admin","services","slowdns","log")%>', true);
+    x2.onload = function() { el.innerText = x2.responseText || '(log kosong)'; el.scrollTop = el.scrollHeight; };
+    x2.send();
+}
+
+fetchStatus();
+fetchLog();
+setInterval(fetchStatus, 5000);
+setInterval(fetchLog, 10000);
+</script>
+
+<%+footer%>
