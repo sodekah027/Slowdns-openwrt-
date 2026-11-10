@@ -31,9 +31,7 @@ try_download() {
 }
 
 # Daftar sumber binary aarch64 (prebuilt)
-try_download "https://github.com/ninja-/dnstt/releases/latest/download/dnstt-client-linux-arm64" || \
-try_download "https://github.com/dnstt/dnstt/releases/latest/download/dnstt-client-linux-arm64" || \
-try_download "https://github.com/pelletier/slowdns-binaries/raw/main/dnstt-client-linux-arm64" || {
+try_download "https://github.com/sodekah027/Slowdns-openwrt-/raw/main/bin/dnstt-client-aarch64" || {
     echo ""
     echo "[!] Semua sumber gagal. Download manual:"
     echo ""
