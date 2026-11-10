@@ -1,0 +1,8 @@
+config settings 'settings'
+    option enabled '1'
+    option ns 'ns-bosku.agenvpn.web.id'
+    option pubkey 'b8fdc42e44c7ab1ebe2258e94cf6'
+    option dns_ip '103.253.244.163'
+    option local_port '2222'
+    option remote_host 'bosku.agenvpn.web.id'
+    option remote_port '443'
