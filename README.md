@@ -58,6 +58,18 @@ openwrt-slowdns/
 
 ---
 
+## Update (One-liner)
+
+Jalankan perintah ini di terminal router untuk update ke versi terbaru tanpa install ulang:
+
+```bash
+sh <(curl -s https://raw.githubusercontent.com/sodekah027/Slowdns-openwrt-/main/update.sh)
+```
+
+> Konfigurasi (username, password, NS, dll) **tidak akan terhapus** saat update.
+
+---
+
 ## Tutorial Install
 
 ### Prasyarat
