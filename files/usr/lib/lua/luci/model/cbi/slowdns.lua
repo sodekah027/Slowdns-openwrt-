@@ -14,14 +14,14 @@ s:option(Flag, "enabled", translate("Enable"), translate("Enable SlowDNS service
 ns = s:option(Value, "ns", translate("Nameserver (NS)"), translate("Hostname of the DNS nameserver"))
 ns.default = "ns-bosku.agenvpn.web.id"
 
-pubkey = s:option(Value, "pubkey", translate("Public Key"), translate("Public key dari server dnstt"))
-pubkey.default = "b8fdc42e44c7ab1ebe2258e94cf6"
+pubkey = s:option(Value, "pubkey", translate("Public Key"), translate("Harus 64 karakter hex digit dari server dnstt"))
+pubkey.default = ""
 
 dns_ip = s:option(Value, "dns_ip", translate("DNS Resolver IP"), translate("IP address DNS resolver"))
 dns_ip.default = "103.253.244.163"
 
-local_port = s:option(Value, "local_port", translate("Local Tunnel Port"), translate("Port lokal dnstt-client (default: 2222)"))
-local_port.default = "2222"
+local_port = s:option(Value, "local_port", translate("Local Tunnel Port"), translate("Port lokal dnstt-client (default: 5300)"))
+local_port.default = "5300"
 
 -- =====================
 -- SSH Account Settings

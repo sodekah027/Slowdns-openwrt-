@@ -11,32 +11,40 @@ start_service() {
 
     # Validasi binary
     if [ ! -x /usr/bin/dnstt-client ]; then
-        logger -t slowdns -p daemon.err "ERROR: /usr/bin/dnstt-client tidak ditemukan atau tidak executable!"
+        logger -t slowdns -p daemon.err "ERROR: /usr/bin/dnstt-client tidak ditemukan!"
         return 1
     fi
 
     FSIZE=$(wc -c < /usr/bin/dnstt-client 2>/dev/null || echo 0)
     if [ "$FSIZE" -lt 100000 ]; then
-        logger -t slowdns -p daemon.err "ERROR: Binary tidak valid ($FSIZE bytes). Jalankan install.sh ulang!"
+        logger -t slowdns -p daemon.err "ERROR: Binary tidak valid ($FSIZE bytes)!"
         return 1
     fi
 
-    config_get ns         settings ns         "ns-bosku.agenvpn.web.id"
-    config_get dns_ip     settings dns_ip     "103.253.244.163"
-    config_get local_port settings local_port "2222"
-    config_get pubkey     settings pubkey     ""
+    config_get ns          settings ns          "ns-bosku.agenvpn.web.id"
+    config_get dns_ip      settings dns_ip      "103.253.244.163"
+    config_get local_port  settings local_port  "5300"
+    config_get pubkey      settings pubkey      ""
+
+    # Validasi pubkey (harus 64 hex digit)
+    PKLEN=$(printf '%s' "$pubkey" | wc -c)
+    if [ "$PKLEN" -ne 64 ]; then
+        logger -t slowdns -p daemon.err "ERROR: Public key harus 64 hex digit! Sekarang: $PKLEN karakter"
+        return 1
+    fi
 
     # Tulis pubkey ke file
     mkdir -p /etc/slowdns
-    [ -n "$pubkey" ] && printf '%s' "$pubkey" > /etc/slowdns/pubkey.pub
+    printf '%s' "$pubkey" > /etc/slowdns/pubkey.pub
+
+    logger -t slowdns -p daemon.info "Starting dnstt-client: ns=$ns dns=${dns_ip}:53 local=127.0.0.1:${local_port}"
 
     # Instance 1: dnstt-client
     procd_open_instance "dnstt"
     procd_set_param command /usr/bin/dnstt-client \
-        -udp \
+        -udp "${dns_ip}:53" \
         -pubkey-file /etc/slowdns/pubkey.pub \
         "$ns" \
-        "${dns_ip}:53" \
         "127.0.0.1:${local_port}"
     procd_set_param respawn 3600 5 5
     procd_set_param stdout 1
