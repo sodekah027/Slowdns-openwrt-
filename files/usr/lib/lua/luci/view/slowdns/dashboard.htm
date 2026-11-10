@@ -112,14 +112,37 @@
     <a class="sd-btn btn-gray"   href="#" onclick="fetchLog()">↻ Refresh Log</a>
 </div>
 
-<!-- YACD CARD -->
+<!-- TUNNEL INFO CARD -->
 <div class="sd-card">
-    <div class="sd-title">YACD — Clash Dashboard</div>
-    <p style="font-size:12px;color:#888;">Pastikan Clash/Mihomo sudah berjalan dengan external-controller aktif di port <b>9090</b>.</p>
-    <iframe class="yacd-frame"
-        src="http://yacd.haishan.me/?hostname=127.0.0.1&port=9090&secret="
-        sandbox="allow-scripts allow-same-origin allow-forms">
-    </iframe>
+    <div class="sd-title">Info Tunnel dnstt</div>
+    <div class="sd-status-row">
+        <span class="sd-label">PID dnstt-client</span>
+        <span id="info-pid" style="font-family:monospace;color:#333;">-</span>
+    </div>
+    <div class="sd-status-row">
+        <span class="sd-label">Local Port</span>
+        <span id="info-port" style="font-family:monospace;color:#333;">-</span>
+    </div>
+    <div class="sd-status-row">
+        <span class="sd-label">SSH Session Aktif</span>
+        <span id="info-ssh-count" style="font-family:monospace;color:#333;">-</span>
+    </div>
+    <div class="sd-status-row">
+        <span class="sd-label">Uptime Service</span>
+        <span id="info-uptime" style="font-family:monospace;color:#333;">-</span>
+    </div>
+    <div class="sd-status-row">
+        <span class="sd-label">Nameserver</span>
+        <span id="info-ns" style="font-family:monospace;color:#2196f3;">-</span>
+    </div>
+    <div class="sd-status-row">
+        <span class="sd-label">DNS Resolver IP</span>
+        <span id="info-dns" style="font-family:monospace;color:#2196f3;">-</span>
+    </div>
+    <div class="sd-status-row">
+        <span class="sd-label">SSH Host</span>
+        <span id="info-host" style="font-family:monospace;color:#2196f3;">-</span>
+    </div>
 </div>
 
 <!-- LOG CARD -->
@@ -152,6 +175,13 @@ function fetchStatus() {
             setStatus('dnstt', d.dnstt);
             setStatus('ssh',   d.ssh);
             setStatus('port',  d.port);
+            document.getElementById('info-pid').innerText       = d.pid       || '-';
+            document.getElementById('info-port').innerText      = d.local_port|| '-';
+            document.getElementById('info-ssh-count').innerText = (d.ssh_count || '0') + ' sesi';
+            document.getElementById('info-uptime').innerText    = d.uptime    || '-';
+            document.getElementById('info-ns').innerText        = d.ns        || '-';
+            document.getElementById('info-dns').innerText       = d.dns_ip    || '-';
+            document.getElementById('info-host').innerText      = d.remote_host || '-';
         } catch(e) {}
     };
     xhr.send();

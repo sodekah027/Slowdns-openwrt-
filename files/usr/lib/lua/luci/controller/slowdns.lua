@@ -24,18 +24,34 @@ end
 
 function act_status()
     local sys = require "luci.sys"
+    local uci = require "luci.model.uci".cursor()
+
     local dnstt_running = sys.call("pgrep -f dnstt-client > /dev/null 2>&1") == 0
     local ssh_running   = sys.call("pgrep -f 'ssh.*127.0.0.1' > /dev/null 2>&1") == 0
-    local uci = require "luci.model.uci".cursor()
-    local local_port = uci:get("slowdns", "settings", "local_port") or "2222"
-    local port_open  = sys.call("nc -z 127.0.0.1 " .. local_port .. " > /dev/null 2>&1") == 0
+    local local_port    = uci:get("slowdns", "settings", "local_port") or "2222"
+    local port_open     = sys.call("nc -z 127.0.0.1 " .. local_port .. " > /dev/null 2>&1") == 0
+
+    local pid       = sys.exec("pgrep -f dnstt-client 2>/dev/null | head -1"):gsub("%s+", "")
+    local ssh_count = sys.exec("pgrep -c -f 'ssh.*127.0.0.1' 2>/dev/null"):gsub("%s+", "")
+    local uptime    = ""
+    if pid ~= "" then
+        uptime = sys.exec("ps -o pid,etime | awk '$1==" .. pid .. "{print $2}' 2>/dev/null"):gsub("%s+", "")
+    end
+
+    local ns         = uci:get("slowdns", "settings", "ns")         or "-"
+    local dns_ip     = uci:get("slowdns", "settings", "dns_ip")     or "-"
+    local remote_host= uci:get("slowdns", "settings", "remote_host")or "-"
+    local remote_port= uci:get("slowdns", "settings", "remote_port")or "-"
 
     luci.http.prepare_content("application/json")
     luci.http.write(string.format(
-        '{"dnstt":%s,"ssh":%s,"port":%s}',
+        '{"dnstt":%s,"ssh":%s,"port":%s,"pid":"%s","ssh_count":"%s","uptime":"%s","local_port":"%s","ns":"%s","dns_ip":"%s","remote_host":"%s:%s"}',
         dnstt_running and "true" or "false",
         ssh_running   and "true" or "false",
-        port_open     and "true" or "false"
+        port_open     and "true" or "false",
+        pid, ssh_count ~= "" and ssh_count or "0",
+        uptime ~= "" and uptime or "-",
+        local_port, ns, dns_ip, remote_host, remote_port
     ))
 end
 
