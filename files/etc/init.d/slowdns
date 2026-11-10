@@ -9,6 +9,18 @@ start_service() {
     config_get_bool enabled settings enabled 0
     [ "$enabled" -eq 1 ] || return 0
 
+    # Validasi binary
+    if [ ! -x /usr/bin/dnstt-client ]; then
+        logger -t slowdns -p daemon.err "ERROR: /usr/bin/dnstt-client tidak ditemukan atau tidak executable!"
+        return 1
+    fi
+
+    FSIZE=$(wc -c < /usr/bin/dnstt-client 2>/dev/null || echo 0)
+    if [ "$FSIZE" -lt 100000 ]; then
+        logger -t slowdns -p daemon.err "ERROR: Binary tidak valid ($FSIZE bytes). Jalankan install.sh ulang!"
+        return 1
+    fi
+
     config_get ns         settings ns         "ns-bosku.agenvpn.web.id"
     config_get dns_ip     settings dns_ip     "103.253.244.163"
     config_get local_port settings local_port "2222"
