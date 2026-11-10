@@ -10,7 +10,7 @@ echo "[*] Memasang SlowDNS (dnstt) + LuCI GUI untuk AArch64..."
 # 1. Install dependensi
 echo "[*] Menginstall dependensi..."
 opkg update > /dev/null 2>&1
-opkg install curl luci-base > /dev/null 2>&1
+opkg install curl luci-base sshpass openssh-client > /dev/null 2>&1
 
 # 2. Download dnstt-client binary
 echo "[*] Mendownload binary dnstt-client..."
