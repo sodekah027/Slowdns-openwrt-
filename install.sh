@@ -11,7 +11,7 @@ echo "======================================"
 # 1. Install dependensi
 echo "[*] Menginstall dependensi..."
 opkg update > /dev/null 2>&1
-opkg install curl openssh-client sshpass luci-base > /dev/null 2>&1
+opkg install curl openssh-client luci-base redsocks > /dev/null 2>&1
 
 # 2. Download dnstt-client binary (coba beberapa sumber)
 echo "[*] Mendownload binary dnstt-client (aarch64)..."

@@ -23,6 +23,9 @@ dns_ip.default = "103.253.244.163"
 local_port = s:option(Value, "local_port", translate("Local Tunnel Port"), translate("Port lokal dnstt-client (default: 5300)"))
 local_port.default = "5300"
 
+socks_port = s:option(Value, "socks_port", translate("SOCKS5 Port"), translate("Local SOCKS5 proxy port for OpenClash or redsocks"))
+socks_port.default = "1080"
+
 -- =====================
 -- SSH Account Settings
 -- =====================
