@@ -62,7 +62,8 @@ fi
 if [ -d "./files" ]; then
     cp -r ./files/* /
     chmod +x /usr/bin/ssh-tunnel-wrapper.sh /usr/bin/slowdns-internet.sh \
-             /usr/bin/slowdns-openclash.sh /usr/bin/slowdns-control.sh 2>/dev/null
+             /usr/bin/slowdns-openclash.sh /usr/bin/slowdns-control.sh \
+             /usr/bin/slowdns-clash-inject.py 2>/dev/null
     chmod +x "$INIT_SCRIPT"
     echo "[*] File konfigurasi dan plugin berhasil disalin."
 fi

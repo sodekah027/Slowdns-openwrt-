@@ -31,6 +31,7 @@ curl -s -o "$TMP/files/usr/lib/lua/luci/model/cbi/slowdns.lua"       "$REPO/file
 curl -s -o "$TMP/files/usr/bin/ssh-tunnel-wrapper.sh"                  "$REPO/files/usr/bin/ssh-tunnel-wrapper.sh"
 curl -s -o "$TMP/files/usr/bin/slowdns-internet.sh"                    "$REPO/files/usr/bin/slowdns-internet.sh"
 curl -s -o "$TMP/files/usr/bin/slowdns-openclash.sh"                   "$REPO/files/usr/bin/slowdns-openclash.sh"
+curl -s -o "$TMP/files/usr/bin/slowdns-clash-inject.py"                "$REPO/files/usr/bin/slowdns-clash-inject.py"
 curl -s -o "$TMP/files/usr/bin/slowdns-control.sh"                     "$REPO/files/usr/bin/slowdns-control.sh"
 curl -s -o "$TMP/files/etc/redsocks.conf"                             "$REPO/files/etc/redsocks.conf"
 curl -s -o "$TMP/files/usr/lib/lua/luci/view/slowdns/log.htm"        "$REPO/files/usr/lib/lua/luci/view/slowdns/log.htm"
