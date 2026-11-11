@@ -43,7 +43,6 @@ start_service() {
     # Instance 1: dnstt-client DNS tunnel
     procd_open_instance "dnstt"
     procd_set_param command /usr/bin/dnstt-client \
-        -mtu 512 \
         -udp "${dns_ip}:53" \
         -pubkey-file /etc/slowdns/pubkey.pub \
         "$ns" \
