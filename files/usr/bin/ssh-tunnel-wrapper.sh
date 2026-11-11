@@ -11,7 +11,7 @@ logger -t slowdns -p daemon.info "SSH wrapper: menunggu dnstt-client di port $lo
 
 i=0
 while [ $i -lt 30 ]; do
-    (echo > /dev/tcp/127.0.0.1/$local_port) 2>/dev/null && break
+    nc -w 2 127.0.0.1 "$local_port" </dev/null >/dev/null 2>&1 && break
     sleep 2
     i=$((i+1))
 done

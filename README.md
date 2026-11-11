@@ -58,6 +58,18 @@ openwrt-slowdns/
 
 ---
 
+## Plug and Play
+
+Instalasi satu perintah dari router:
+
+```sh
+sh -c 'cd /tmp && rm -rf slowdns-install && mkdir slowdns-install && cd slowdns-install && wget -qO install.sh https://raw.githubusercontent.com/sodekah027/Slowdns-openwrt-/main/install.sh && chmod +x install.sh && ./install.sh'
+```
+
+Setelah instalasi, buka **Services → SlowDNS**, isi public key 64 karakter dan akun SSH, lalu klik Save & Apply. Service default **mati** agar tidak bentrok dengan OpenClash. Aktifkan `Enable` hanya jika ingin SlowDNS menjadi jalur mandiri.
+
+Mode mandiri memakai SSH SOCKS5 lokal `127.0.0.1:1080` dan redsocks untuk meneruskan TCP dari LAN. UDP, QUIC, dan aplikasi yang memakai DNS-over-HTTPS tidak otomatis ikut; YouTube/TikTok dapat tetap memakai QUIC sehingga perlu dipaksa TCP jika dibutuhkan.
+
 ## Update (One-liner)
 
 Jalankan perintah ini di terminal router untuk update ke versi terbaru tanpa install ulang:
