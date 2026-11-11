@@ -63,6 +63,7 @@ start_service() {
 }
 
 stop_service() {
+    /usr/bin/slowdns-openclash.sh stop 2>/dev/null
     /bin/sh /usr/bin/slowdns-internet.sh stop 2>/dev/null
     killall dnstt-client 2>/dev/null
     killall ssh 2>/dev/null

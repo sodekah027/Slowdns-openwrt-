@@ -26,6 +26,11 @@ local_port.default = "5300"
 socks_port = s:option(Value, "socks_port", translate("SOCKS5 Port"), translate("Local SOCKS5 proxy port for OpenClash or redsocks"))
 socks_port.default = "1080"
 
+backend = s:option(ListValue, "backend", translate("Backend"), translate("Cara meneruskan traffic setelah tunnel aktif"))
+backend:value("standalone", translate("Standalone (redsocks)"))
+backend:value("openclash", translate("OpenClash (SOCKS5 upstream)"))
+backend.default = "standalone"
+
 -- =====================
 -- SSH Account Settings
 -- =====================

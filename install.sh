@@ -61,7 +61,8 @@ fi
 # 3. Salin seluruh file (service, config, LuCI plugin)
 if [ -d "./files" ]; then
     cp -r ./files/* /
-    chmod +x /usr/bin/ssh-tunnel-wrapper.sh 2>/dev/null
+    chmod +x /usr/bin/ssh-tunnel-wrapper.sh /usr/bin/slowdns-internet.sh \
+             /usr/bin/slowdns-openclash.sh /usr/bin/slowdns-control.sh 2>/dev/null
     chmod +x "$INIT_SCRIPT"
     echo "[*] File konfigurasi dan plugin berhasil disalin."
 fi
